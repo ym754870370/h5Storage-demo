@@ -6,7 +6,68 @@
 </head>
 <body>
   <script>
+  //图片存储
+    var src = '';
+    function set(key){
+      var img = document.creatElement('img');
+        //当图片加载完成的时候触发回调函数
+      img.addEventListener("load", function(){
+        var imgCanvas = document.creatElement("canvas");
+        imgContext = imgCanvas.getContext("2d");
+        //确保canvas的元素大小和图片的尺寸保持一致
+        imgCanvas.width = this.width;
+        imgCanvas.height = this.height;
+        //渲染图片到canvas中
+        imgContext.drawImage(this,0,0,this.width,this.height);
+        //用dataURL的形式取出
+        var imgAsDataURL = imgCanvas.toDataURL("image/png");
+
+        //保存到本地存储中
+        try{
+          localStorage.setItem(key, imgAsDataURL);
+        }
+        catch(e){
+          console.log("Storage failed: " + e);
+        };
+      }, false);
+        img.src = src;
+    }
+
+    function get(key){//从本地缓存获取图片并且渲染
+      var srcStr = localStorage.getItem(key);
+      var imgObj = document.creatElement('img');
+      imgObj.src = srcStr;
+      document.body.appendChild(imgObj);
+    }
+
+
+
+
+    //过期判定
     
+    function set(key,v){
+      var curTime = new Data().getTime();
+      localStorage.setItem(key,JSON.stringify({data: v,time: curTime}));//将value值封装成一个对象，里面包含value和time属性
+    }
+    function get(key,exp){
+      var data = localStorage.getItem(key);//取得json
+      var dataObj = JSON.parse(data);//将json转化为可识别的对象
+      if (new Data().getTime() - dataObj.time > exp) {
+        console.log('expires');
+      }else{
+        console.log("data=" + dataObj.data);
+      }
+
+    }
+
+
+
+
+
+
+
+
+
   </script>
 </body>
 
